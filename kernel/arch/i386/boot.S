@@ -6,4 +6,3 @@
 start:
     call kernel_main
     hlt
-

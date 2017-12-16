@@ -52,4 +52,3 @@ $(LIBK): $(LIBK_OBJS)
 
 .S.libk.o:
 	$(CC) -MD -c $< -o $@ $(LIBK_CFLAGS) $(LIBK_CPPFLAGS)
-

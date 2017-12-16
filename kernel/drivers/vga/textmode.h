@@ -37,4 +37,3 @@ void textmode_putchar(char c, uint8_t attrib);
 
 void textmode_write(const char* data, size_t size, uint8_t attrib);
 void textmode_write_string(const char* data, uint8_t attrib);
-
