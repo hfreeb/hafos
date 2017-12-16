@@ -10,4 +10,3 @@
 .long MAGIC_NUMBER
 .long FLAGS
 .long CHECKSUM
-

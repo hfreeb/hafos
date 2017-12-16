@@ -49,4 +49,3 @@ cleanrun: run clean
 
 .S.o:
 	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
-
