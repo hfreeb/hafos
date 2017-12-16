@@ -1,19 +1,19 @@
-SYSROOT=../sysroot
+SYSROOT = ../sysroot
 
 include ../make.config
 
-KERNEL:=$(SYSROOT)$(BOOT_DIR)/epos.kernel
-ARCH_DIR:=arch/$(ARCH)
+KERNEL := $(SYSROOT)$(BOOT_DIR)/epos.kernel
+ARCH_DIR := arch/$(ARCH)
 
 SRC_FILES := $(shell find -type f -name "*.c")
 HDR_FILES := $(shell find -type f -name "*.h")
 ASM_FILES := $(shell find -type f -name "*.S")
-DEBUG_FILES ?= $(shell find -type f -name "*.d")
+DEBUG_FILES := $(shell find -type f -name "*.d")
 
 KERNEL_OBJS := $(patsubst %.c, %.o, $(SRC_FILES))
 KERNEL_OBJS += $(patsubst %.S, %.o, $(ASM_FILES))
 
-LIBS += -nostdlib -lk -lgcc
+LIBS := -nostdlib -lk -lgcc
 
 .PHONY: all clean iso run
 

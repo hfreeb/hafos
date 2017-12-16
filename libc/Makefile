@@ -1,8 +1,8 @@
-SYSROOT=../sysroot
+SYSROOT := ../sysroot
 
 include ../make.config
 
-ARCH_DIR:=arch/$(ARCH)
+ARCH_DIR := arch/$(ARCH)
 
 LIBC := libc.a
 LIBK := libk.a
@@ -13,7 +13,7 @@ LIBK_CPPFLAGS += $(CPPFLAGS) -D__is_libk
 SRC_FILES := $(shell find -type f -name "*.c")
 HDR_FILES := $(shell find -type f -name "*.h")
 ASM_FILES := $(shell find -type f -name "*.S")
-DEBUG_FILES ?= $(shell find -type f -name "*.d")
+DEBUG_FILES := $(shell find -type f -name "*.d")
 
 LIBC_OBJS := $(patsubst %.c, %.o, $(SRC_FILES))
 LIBC_OBJS += $(patsubst %.S, %.o, $(ASM_FILES))
