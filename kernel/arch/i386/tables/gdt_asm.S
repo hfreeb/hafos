@@ -1,5 +1,4 @@
 .section .text
-.align 4
 
 .global gdt_flush
 .type gdt_flush, @function
@@ -12,9 +11,10 @@ gdt_flush:
     movw %ax, %ds
     movw %ax, %es
     movw %ax, %fs
+    movw %ax, %gs
     movw %ax, %ss
 
-    ljmp $0x08, $.flush
+    ljmp $0x08, $return
 
-.flush:
+return:
     ret
