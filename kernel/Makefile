@@ -30,7 +30,7 @@ install-kernel: $(KERNEL)
 clean: 
 	rm -f $(KERNEL) $(ISO) $(KERNEL_OBJS) $(DEBUG_FILES)
 
-$(KERNEL): $(KERNEL_OBJS) $(ARCH_DIR)/linker.ld
+$(KERNEL): install-headers $(KERNEL_OBJS) $(ARCH_DIR)/linker.ld
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(CFLAGS) $(KERNEL_OBJS) $(LIBS)
 	grub-file --is-x86-multiboot $(KERNEL)
 
