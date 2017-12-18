@@ -11,6 +11,8 @@ stack_top:
 .type start, @function
 
 start:
+    cli
+
     movl $stack_top, %esp
 
     call _init
