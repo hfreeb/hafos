@@ -1,7 +1,7 @@
 .section .text
 
 .extern idt_register_isr
-.extern isr_handler
+.extern int_handler
 
 .global idt_flush
 
@@ -60,9 +60,9 @@ isr_common_stub:
     ISR \index, 1
 .endm
 
-.global idt_register_stubs
+.global isr_register_stubs
 
-idt_register_stubs:
+isr_register_stubs:
     ISR 0
     ISR 1
     ISR 2
@@ -95,4 +95,22 @@ idt_register_stubs:
     ISR 29
     ISR 30
     ISR 31
+    //PIC IRQs start
+    ISR 32
+    ISR 33
+    ISR 34
+    ISR 35
+    ISR 36
+    ISR 37
+    ISR 38
+    ISR 39
+    ISR 40
+    ISR 41
+    ISR 42
+    ISR 43
+    ISR 44
+    ISR 45
+    ISR 46
+    ISR 47
+    //PIC IRQs end
     ISR 127
