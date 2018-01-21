@@ -2,6 +2,7 @@ SYSROOT = ../sysroot
 
 include ../make.config
 
+LIBK := $(SYSROOT)$(LIB_DIR)/libk.a
 KERNEL := $(SYSROOT)$(BOOT_DIR)/epos.kernel
 ARCH_DIR := arch/$(ARCH)
 
@@ -20,8 +21,10 @@ LIBS := -nostdlib -lk -lgcc
 all: $(KERNEL)
 
 install-headers:
+	rm -r $(SYSROOT)$(INCLUDE_DIR)/
 	mkdir -p $(SYSROOT)$(INCLUDE_DIR)/
 	cp --parents $(HDR_FILES) $(SYSROOT)$(INCLUDE_DIR)/
+	$(MAKE) -C ../libc install-headers
 
 install-kernel: $(KERNEL)
 	mkdir -p $(SYSROOT)$(BOOT_DIR)/
@@ -30,7 +33,7 @@ install-kernel: $(KERNEL)
 clean: 
 	rm -f $(KERNEL) $(ISO) $(KERNEL_OBJS) $(DEBUG_FILES)
 
-$(KERNEL): install-headers $(KERNEL_OBJS) $(ARCH_DIR)/linker.ld
+$(KERNEL): install-headers $(LIBK) $(KERNEL_OBJS) $(ARCH_DIR)/linker.ld
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(CFLAGS) $(KERNEL_OBJS) $(LIBS)
 	grub-file --is-x86-multiboot $(KERNEL)
 
@@ -43,6 +46,9 @@ run: $(ISO)
 	qemu-system-i386 -cdrom $(ISO)
 
 cleanrun: run clean
+
+$(LIBK):
+	$(MAKE) -C ../libc install-libk
 
 .c.o:
 	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
