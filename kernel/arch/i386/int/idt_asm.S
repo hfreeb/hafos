@@ -23,7 +23,11 @@ isr_common_stub:
     mov %ax, %fs
     mov %ax, %gs
 
+    //Call ISR handler
+    push %esp
     call isr_handler
+
+    add $4, %esp
 
     pop %eax
     mov %ax, %ds
