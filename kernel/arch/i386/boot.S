@@ -18,4 +18,5 @@ start:
     call _init
 
     call kernel_main
+
     hlt
