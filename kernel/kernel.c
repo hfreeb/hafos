@@ -1,5 +1,6 @@
 #include <drivers/vga/textmode.h>
 #include <drivers/timer/timer.h>
+#include <drivers/ps2/keyboard.h>
 #include <stdio.h>
 #include <arch/i386/gdt/gdt.h>
 #include <arch/i386/int/idt.h>
@@ -18,6 +19,10 @@ void kernel_main(void) {
     textmode_write_string("Hello, terminal!\n");
 
     timer_install();
+    keyboard_install();
+
+    asm volatile ("sti");
+
 
     for (;;);
 }
