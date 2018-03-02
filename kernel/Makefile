@@ -34,7 +34,7 @@ clean:
 	rm -f $(KERNEL) $(ISO) $(KERNEL_OBJS) $(DEBUG_FILES)
 
 $(KERNEL): install-headers $(LIBK) $(KERNEL_OBJS) $(ARCH_DIR)/linker.ld
-	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(CFLAGS) $(KERNEL_OBJS) $(LIBS)
+	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(CFLAGS) $(CPPFLAGS) $(KERNEL_OBJS) $(LIBS)
 	grub-file --is-x86-multiboot $(KERNEL)
 
 iso: $(ISO)
@@ -43,7 +43,7 @@ $(ISO): $(KERNEL) $(SYSROOT)$(BOOT_DIR)/grub/grub.cfg
 	grub-mkrescue -o $(ISO) $(SYSROOT)
 
 run: $(ISO)
-	qemu-system-i386 -cdrom $(ISO)
+	qemu-system-i386 $(QEMU_FLAGS) -cdrom $(ISO)
 
 cleanrun: run clean
 
