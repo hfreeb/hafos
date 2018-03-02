@@ -53,9 +53,15 @@ void textmode_put_entry_at(uint16_t entry, size_t x, size_t y) {
 }
 
 void textmode_scroll(void) {
-    memmove(vga_buffer, vga_buffer + VGA_WIDTH, VGA_WIDTH * (VGA_HEIGHT - 1) * sizeof(*vga_buffer));
-
-    memset(vga_buffer, 0, VGA_WIDTH);
+    for (int row = 0; row < VGA_HEIGHT; ++row) {
+        for (int col = 0; col < VGA_WIDTH; ++col) {
+            if (row == VGA_HEIGHT - 1) {
+                vga_buffer[VGA_WIDTH * row + col] = textmode_make_entry(' ', vga_attrib);
+            } else {
+                vga_buffer[VGA_WIDTH * row + col] = vga_buffer[VGA_WIDTH * (row + 1) + col];
+            }
+        }
+    }
 }
 
 void textmode_set_cursor(size_t x, size_t y) {
