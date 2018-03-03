@@ -30,7 +30,6 @@ enum token_type {
     TOKEN_TYPE_INVALID,
 
     //TODO: remove
-    TOKEN_TYPE_TEST,
     //Plain string, no vararg
     TOKEN_TYPE_TEXT,
 
@@ -88,7 +87,6 @@ static size_t itoa(char *out_num, unsigned long long num, struct format_token *t
     *p = '\0';
 
     //TODO: Right justifcation
-
 
     do {
         //gets stuck
@@ -246,7 +244,7 @@ int vprintf(const char *fmt, va_list vlist) {
 
             case TOKEN_TYPE_UINT: {
                 char str[32];
-                int num;
+                unsigned int num;
                 num = va_arg(vlist, unsigned int);
                 itoa(str, (unsigned long long)  num, &token);
                 print(str);
