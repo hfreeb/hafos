@@ -1,4 +1,4 @@
-#include "gdt.h"
+#include <hafos/gdt.h>
 
 #include <stdint.h>
 #include <stddef.h>
@@ -34,7 +34,7 @@ static void gdt_set_gate(size_t num, uint32_t base, uint32_t limit, uint8_t acce
    gdt_entries[num].access = access;
 }
 
-void gdt_init(void) {
+void gdt_install(void) {
     gdt_ptr.limit = sizeof(gdt_entries) - 1;
     gdt_ptr.base = (uintptr_t) &gdt_entries;
 

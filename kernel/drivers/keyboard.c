@@ -1,8 +1,10 @@
-#include "keyboard.h"
+#include <drivers/keyboard.h>
 
-#include <arch/i386/int/interrupt.h>
+#include <asm/io.h>
+#include <hafos/irq.h>
 #include <stdio.h>
 
+#define KEYBOARD_IRQ_LINE 1
 #define KEYBOARD_DATA_PORT 0x60
 
 //US-Keyboard layout
@@ -45,7 +47,7 @@ unsigned char kbd_us[128] = {
     0,	/* All other keys are undefined */
 };	
 
-void keyboard_handler(struct int_state *state) {
+static void keyboard_handler(struct int_state *state) {
     unsigned char scancode = inb(KEYBOARD_DATA_PORT);
 
     if (scancode & 0x80) {
@@ -53,8 +55,10 @@ void keyboard_handler(struct int_state *state) {
     } else {
         putchar(kbd_us[scancode]);
     }
+
+    irq_eoi(KEYBOARD_IRQ_LINE);
 }
 
 void keyboard_install(void) {
-    int_register_handler(33, keyboard_handler);
+    irq_install(KEYBOARD_IRQ_LINE, keyboard_handler);
 }

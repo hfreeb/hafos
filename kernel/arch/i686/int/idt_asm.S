@@ -1,7 +1,7 @@
 .section .text
 
 .extern idt_register_isr
-.extern int_handler
+.extern idt_handle_isr
 
 .global idt_flush
 
@@ -25,7 +25,7 @@ isr_common_stub:
 
     //Call ISR handler
     push %esp
-    call isr_handler
+    call idt_handle_isr
 
     add $4, %esp
 
@@ -64,9 +64,9 @@ isr_common_stub:
     ISR \index, 1
 .endm
 
-.global isr_register_stubs
+.global idt_register_stubs
 
-isr_register_stubs:
+idt_register_stubs:
     ISR 0
     ISR 1
     ISR 2

@@ -1,7 +1,7 @@
-#include "textmode.h"
+#include <drivers/textmode.h>
 
 #include <string.h>
-#include <drivers/serial/io.h>
+#include <asm/io.h>
 
 #define VGA_WIDTH  80
 #define VGA_HEIGHT 25
