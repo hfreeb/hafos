@@ -1,8 +1,10 @@
-#include "timer.h"
+#include <drivers/timer.h>
 
 #include <stdio.h>
-#include <arch/i386/int/interrupt.h>
-#include <drivers/serial/io.h>
+#include <hafos/irq.h>
+#include <asm/io.h>
+
+#define TIMER_IRQ_LINE 0
 
 #define TIMER_INPUT_CLOCK 1193180
 #define TIMER_COMMAND_REG 0x43
@@ -14,8 +16,9 @@
 
 static uint64_t timer_ticks = 0;
 
-void timer_handler(struct int_state *state) {
+static void timer_handler(struct int_state *state) {
     timer_ticks++;
+    irq_eoi(TIMER_IRQ_LINE);
 }
 
 void timer_install(void) {
@@ -25,7 +28,7 @@ void timer_install(void) {
     outb(TIMER_ZERO_DATA, divisor & 0xFF);
     outb(TIMER_ZERO_DATA, divisor >> 8);
 
-    int_register_handler(32, timer_handler); 
+    irq_install(TIMER_IRQ_LINE, timer_handler); 
 }
 
 void timer_wait(uint64_t ticks) {
