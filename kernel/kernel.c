@@ -7,9 +7,8 @@
 #include <arch/i386/int/idt.h>
 #include <arch/i386/int/irq.h>
 
-static int loop = 1;
-
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 void kernel_main(multiboot_info_t *mbi, uint32_t mb_magic) {
     gdt_init();
     irq_init();

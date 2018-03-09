@@ -44,11 +44,15 @@ void irq_init(void) {
     io_wait();
 }
 
+void irq_install(uint8_t interrupt, int_handler_t handler) {
+    idt_install(interrupt + PIC1_OFFSET, handler);
+}
+
 bool irq_check(uint8_t interrupt) {
     return interrupt >= PIC1_OFFSET && interrupt <= PIC2_END;
 }
 
-void irq_ack(uint8_t interrupt) {
+void irq_eoi(uint8_t interrupt) {
     if (interrupt >= PIC2_OFFSET) {
         outb(PIC2_COMMAND, PIC_EOI);
     }
