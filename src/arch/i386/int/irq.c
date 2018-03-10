@@ -1,6 +1,6 @@
-#include "irq.h"
+#include <hafos/irq.h>
 
-#include <drivers/serial/io.h>
+#include <asm/io.h>
 
 #define PIC1         0x20
 #define PIC1_OFFSET  0x20

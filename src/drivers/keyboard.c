@@ -1,8 +1,9 @@
-#include "keyboard.h"
+#include <ps2/keyboard.h>
 
-#include <arch/i386/int/interrupt.h>
+#include <hafos/irq.h>
 #include <stdio.h>
 
+#define KEYBOARD_IRQ_LINE 1
 #define KEYBOARD_DATA_PORT 0x60
 
 //US-Keyboard layout
@@ -53,8 +54,10 @@ void keyboard_handler(struct int_state *state) {
     } else {
         putchar(kbd_us[scancode]);
     }
+
+    irq_eoi(KEYBOARD_IRQ_LINE);
 }
 
 void keyboard_install(void) {
-    int_register_handler(33, keyboard_handler);
+    int_register_handler(KEYBOARD_IRQ_LINE, keyboard_handler);
 }
