@@ -46,7 +46,7 @@ unsigned char kbd_us[128] = {
     0,	/* All other keys are undefined */
 };	
 
-void keyboard_handler(struct int_state *state) {
+static void keyboard_handler(struct int_state *state) {
     unsigned char scancode = inb(KEYBOARD_DATA_PORT);
 
     if (scancode & 0x80) {

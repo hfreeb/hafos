@@ -16,7 +16,7 @@
 
 static uint64_t timer_ticks = 0;
 
-void timer_handler(struct int_state *state) {
+static void timer_handler(struct int_state *state) {
     timer_ticks++;
     irq_eoi(TIMER_IRQ_LINE);
 }
