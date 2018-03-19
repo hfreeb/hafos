@@ -7,7 +7,7 @@ INCLUDE_DIR := /usr/include
 BOOT_DIR := /boot
 LIB_DIR := /usr/lib
 
-ISO := epos-$(ARCH).iso
+ISO := hafos-$(ARCH).iso
 
 CROSS_DIR ?= ~/opt/cross/bin
 CC := $(CROSS_DIR)/$(TARGET)-gcc --sysroot=$(SYSROOT) -isystem=$(INCLUDE_DIR)
@@ -21,13 +21,15 @@ CFLAGS += -std=gnu11 -ffreestanding -fno-builtin $(WARNINGS)
 CPPFLAGS += -Iinclude
 
 LIBK := $(SYSROOT)$(LIB_DIR)/libk.a
-KERNEL := $(SYSROOT)$(BOOT_DIR)/epos.kernel
-ARCH_DIR := arch/$(ARCH)
+KERNEL_DIR := kernel/
+KERNEL := $(SYSROOT)$(BOOT_DIR)/hafos.kernel
+ARCH_DIR := $(KERNEL_DIR)/arch/$(ARCH)
 
-SRC_FILES := $(shell find -type f -name "*.c")
-HDR_FILES := $(shell find -type f -name "*.h")
-ASM_FILES := $(shell find -type f -name "*.S")
-DEBUG_FILES := $(shell find -type f -name "*.d")
+#TODO: kernel/core += kernel/drivers += kernel/arch/ARCH
+KERNEL_SRC_FILES := $(shell find kernel -type f -name "*.c")
+HDR_FILES := $(shell find kernel/include -type f -name "*.h")
+ASM_FILES := $(shell find kernel -type f -name "*.S")
+DEBUG_FILES := $(shell find kernel -type f -name "*.d")
 
 KERNEL_OBJS := $(patsubst %.c, %.o, $(SRC_FILES))
 KERNEL_OBJS += $(patsubst %.S, %.o, $(ASM_FILES))
@@ -38,11 +40,15 @@ LIBS := -nostdlib -lk -lgcc
 
 all: $(KERNEL)
 
-install-headers:
+kernel-install-headers:
+
+kernel-headers:
 	rm -r $(SYSROOT)$(INCLUDE_DIR)/
 	mkdir -p $(SYSROOT)$(INCLUDE_DIR)/
 	cp --parents $(HDR_FILES) $(SYSROOT)$(INCLUDE_DIR)/
 	$(MAKE) -C ../libc install-headers
+
+kernel-install:
 
 install-kernel: $(KERNEL)
 	mkdir -p $(SYSROOT)$(BOOT_DIR)/
