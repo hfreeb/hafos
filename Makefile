@@ -25,20 +25,21 @@ KERNEL_DIR := kernel/
 KERNEL := $(SYSROOT)$(BOOT_DIR)/hafos.kernel
 ARCH_DIR := $(KERNEL_DIR)/arch/$(ARCH)
 
-#TODO: kernel/core += kernel/drivers += kernel/arch/ARCH
-KERNEL_SRC_FILES := $(shell find kernel -type f -name "*.c")
-HDR_FILES := $(shell find kernel/include -type f -name "*.h")
-ASM_FILES := $(shell find kernel -type f -name "*.S")
-DEBUG_FILES := $(shell find kernel -type f -name "*.d")
+KERNEL_SRC_DIRS := $(KERNEL_DIR)/core $(KERNEL_DIR)/drivers $(ARCH_DIR)
+KERNEL_SRC_FILES := $(shell find $(KERNEL_SRC_DIRS) -type f -name "*.c")
+KERNEL_ASM_FILES := $(shell find $(KERNEL_SRC_DIRS) -type f -name "*.S")
+KERNEL_DEBUG_FILES := $(shell find $(KERNEL_SRC_DIRS) -type f -name "*.d")
 
-KERNEL_OBJS := $(patsubst %.c, %.o, $(SRC_FILES))
-KERNEL_OBJS += $(patsubst %.S, %.o, $(ASM_FILES))
+KERNEL_INCLUDE := $(KERNEL_DIR)/include
+
+KERNEL_OBJS := $(patsubst %.c, %.o, $(KERNEL_SRC_FILES))
+KERNEL_OBJS += $(patsubst %.S, %.o, $(KERNEL_ASM_FILES))
 
 LIBS := -nostdlib -lk -lgcc
 
 .PHONY: all clean iso run
 
-all: $(KERNEL)
+all: kernel-install
 
 kernel-install-headers:
 
@@ -48,14 +49,12 @@ kernel-headers:
 	cp --parents $(HDR_FILES) $(SYSROOT)$(INCLUDE_DIR)/
 	$(MAKE) -C ../libc install-headers
 
-kernel-install:
-
-install-kernel: $(KERNEL)
-	mkdir -p $(SYSROOT)$(BOOT_DIR)/
+kernel-install: $(KERNEL) libk-install
+	mkdir -p $(SYSROOT)$(BOOT_DIR)
 	cp $(KERNEL) $(SYSROOT)$(BOOT_DIR)
-
+	
 clean: 
-	rm -f $(KERNEL) $(ISO) $(KERNEL_OBJS) $(DEBUG_FILES)
+	rm -f $(KERNEL) $(ISO) $(KERNEL_OBJS) $(KERNEL_DEBUG_FILES)
 
 $(KERNEL): install-headers $(LIBK) $(KERNEL_OBJS) $(ARCH_DIR)/linker.ld
 	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(CFLAGS) $(CPPFLAGS) $(KERNEL_OBJS) $(LIBS)
@@ -70,9 +69,6 @@ run: $(ISO)
 	qemu-system-i386 $(QEMU_FLAGS) -cdrom $(ISO)
 
 cleanrun: run clean
-
-$(LIBK):
-	$(MAKE) -C ../libc install-libk
 
 .c.o:
 	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
