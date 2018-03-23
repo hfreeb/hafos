@@ -1,16 +1,16 @@
-#include <arch/i386/multiboot.h>
-#include <drivers/vga/textmode.h>
-#include <drivers/timer/timer.h>
-#include <drivers/ps2/keyboard.h>
+#include <multiboot.h>
+#include <drivers/textmode.h>
+#include <drivers/timer.h>
+#include <drivers/keyboard.h>
 #include <stdio.h>
-#include <arch/i386/gdt/gdt.h>
-#include <arch/i386/int/idt.h>
-#include <arch/i386/int/irq.h>
+#include <hafos/gdt.h>
+#include <hafos/idt.h>
+#include <hafos/irq.h>
 
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 void kernel_main(multiboot_info_t *mbi, uint32_t mb_magic) {
-    gdt_init();
+    gdt_install();
     irq_init();
     idt_init();
 

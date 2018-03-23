@@ -21,7 +21,7 @@ static struct idt_pointer idt_ptr;
 static struct idt_entry idt_entries[256];
 
 extern void idt_flush(uintptr_t);
-extern void isr_register_stubs(void);
+extern void idt_register_stubs(void);
 
 static void idt_set_gate(uint8_t index, uint32_t base, uint16_t selector, uint8_t flags) {
     idt_entries[index].base_low = base & 0xFFFF;

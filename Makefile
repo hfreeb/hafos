@@ -36,6 +36,8 @@ KERNEL_INCLUDE_DIR := $(KERNEL_DIR)/include
 KERNEL_OBJS := $(patsubst %.c, %.o, $(KERNEL_SRC_FILES))
 KERNEL_OBJS += $(patsubst %.S, %.o, $(KERNEL_ASM_FILES))
 
+KERNEL_LIBS := -nostdlib -lk -lgcc
+
 LIBX_DIR := libc
 LIBK_CPPFLAGS += $(CPPFLAGS) -D__is_libk
 
@@ -49,8 +51,6 @@ LIBC_OBJS += $(patsubst %.c, %.o, $(LIBX_ASM_FILES))
 
 LIBK_OBJS := $(LIBC_OBJS:.o=.libk.o)
 
-LIBS := -nostdlib -lk -lgcc
-
 .PHONY: all kernel-headers kernel-install iso run clean
 .SUFFIXES: .o .libk.o .c .S
 
@@ -61,21 +61,19 @@ libk-headers:
 	cp $(LIBX_HDR_FILES) $(SYSROOT)$(INCLUDE_DIR)/
 
 libk-install: $(LIBK)
-	mkdir -p $(SYSROOT)$(LIB_DIR)/
-	cp $(LIBK) $(SYSROOT)$(LIB_DIR)/
 
-$(LIBK): kernel-headers $(LIBK_OBJS)
+$(LIBK): libk-headers kernel-headers $(LIBK_OBJS)
+	mkdir -p $(SYSROOT)$(LIB_DIR)/
 	$(AR) rcs $@ $(LIBK_OBJS)
 
 kernel-headers:
-	cp -r $(KERNEL_INCLUDE_DIR) $(SYSROOT)$(INCLUDE_DIR)/
+	mkdir -p $(SYSROOT)$(INCLUDE_DIR)/
+	cp -r $(KERNEL_INCLUDE_DIR)/* $(SYSROOT)$(INCLUDE_DIR)/
 
 kernel-install: $(KERNEL)
-	mkdir -p $(SYSROOT)$(BOOT_DIR)
-	cp $(KERNEL) $(SYSROOT)$(BOOT_DIR)
 	
 $(KERNEL): kernel-headers libk-install $(KERNEL_OBJS) $(ARCH_DIR)/linker.ld
-	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(CFLAGS) $(CPPFLAGS) $(KERNEL_OBJS) $(LIBS)
+	$(CC) -T $(ARCH_DIR)/linker.ld -o $@ $(CFLAGS) $(CPPFLAGS) $(KERNEL_OBJS) $(KERNEL_LIBS)
 	grub-file --is-x86-multiboot $(KERNEL)
 
 iso: $(ISO)
@@ -87,7 +85,7 @@ run: $(ISO)
 	qemu-system-i386 $(QEMU_FLAGS) -cdrom $(ISO)
 
 clean: 
-	rm -f $(KERNEL) $(ISO) $(KERNEL_OBJS) $(KERNEL_DBG_FILES) $(SYSROOT)$(INCLUDE_DIR)/ $(SYSROOT)$(LIB_DIR)
+	rm -rf $(KERNEL) $(ISO) $(KERNEL_OBJS) $(KERNEL_DBG_FILES) $(SYSROOT)$(INCLUDE_DIR)/ $(SYSROOT)$(LIB_DIR)
 
 .c.o:
 	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)

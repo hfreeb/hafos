@@ -1,5 +1,6 @@
-#include <ps2/keyboard.h>
+#include <drivers/keyboard.h>
 
+#include <asm/io.h>
 #include <hafos/irq.h>
 #include <stdio.h>
 
@@ -59,5 +60,5 @@ static void keyboard_handler(struct int_state *state) {
 }
 
 void keyboard_install(void) {
-    int_register_handler(KEYBOARD_IRQ_LINE, keyboard_handler);
+    irq_install(KEYBOARD_IRQ_LINE, keyboard_handler);
 }

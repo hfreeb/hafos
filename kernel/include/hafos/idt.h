@@ -13,4 +13,4 @@ typedef void (*int_handler_t)(struct int_state*);
 
 void idt_init(void);
 
-void idt_install(uint32_t interrupt, int_handler_t handler);
+void idt_install(uint8_t interrupt, int_handler_t handler);
