@@ -4,6 +4,7 @@
 #include <drivers/keyboard.h>
 #include <stdio.h>
 #include <hafos/gdt.h>
+#include <hafos/paging.h>
 #include <hafos/idt.h>
 #include <hafos/irq.h>
 
@@ -11,6 +12,7 @@
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 void kernel_main(multiboot_info_t *mbi, uint32_t mb_magic) {
     gdt_install();
+    paging_install();
     irq_init();
     idt_init();
 
