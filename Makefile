@@ -26,6 +26,8 @@ KERNEL_DIR := kernel
 KERNEL := $(SYSROOT)$(BOOT_DIR)/hafos.kernel
 ARCH_DIR := $(KERNEL_DIR)/arch/$(ARCH)
 
+QEMU_FLAGS += -no-shutdown -no-reboot -d unimp,guest_errors,cpu_reset
+
 KERNEL_SRC_DIRS := $(KERNEL_DIR)/core $(KERNEL_DIR)/drivers $(ARCH_DIR)
 KERNEL_SRC_FILES := $(shell find $(KERNEL_SRC_DIRS) -type f -name "*.c")
 KERNEL_ASM_FILES := $(shell find $(KERNEL_SRC_DIRS) -type f -name "*.S")
@@ -51,7 +53,7 @@ LIBC_OBJS += $(patsubst %.c, %.o, $(LIBX_ASM_FILES))
 
 LIBK_OBJS := $(LIBC_OBJS:.o=.libk.o)
 
-.PHONY: all kernel-headers kernel-install iso run clean
+.PHONY: all kernel-headers kernel-install iso run clean debug_run debug_gdb
 .SUFFIXES: .o .libk.o .c .S
 
 all: kernel-install
@@ -83,6 +85,13 @@ $(ISO): $(KERNEL) $(SYSROOT)$(BOOT_DIR)/grub/grub.cfg
 
 run: $(ISO)
 	qemu-system-i386 $(QEMU_FLAGS) -cdrom $(ISO)
+
+debug_run: CFLAGS += -ggdb
+debug_run: QEMU_FLAGS += -s -S
+debug_run: debug_vars run
+
+debug_gdb:
+	gdb $(KERNEL) -ex 'set architecture i386' -ex 'target remote localhost:1234' -ex 'layout asm'
 
 clean: 
 	rm -rf $(KERNEL) $(ISO) $(KERNEL_OBJS) $(KERNEL_DBG_FILES) $(SYSROOT)$(INCLUDE_DIR)/ $(SYSROOT)$(LIB_DIR)
