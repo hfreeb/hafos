@@ -1,7 +1,7 @@
 #include <hafos/paging.h>
 #include <stdint.h>
 
-extern void paging_load_directory(uint32_t *);
+extern void paging_load_directory(uintptr_t);
 extern void paging_enable(void);
 
 static uint32_t page_directory[1024] __attribute__((aligned(4096)));

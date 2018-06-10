@@ -8,6 +8,8 @@
 #include <hafos/idt.h>
 #include <hafos/irq.h>
 
+extern uint32_t kernel_end;
+
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 void kernel_main(multiboot_info_t *mbi, uint32_t mb_magic) {
@@ -29,8 +31,7 @@ void kernel_main(multiboot_info_t *mbi, uint32_t mb_magic) {
                 (unsigned long) mmap < mbi->mmap_addr + mbi->mmap_length;
                 mmap = (multiboot_memory_map_t *) ((unsigned long) mmap + mmap->size + sizeof (mmap->size))) {
 
-            printf (" size = 0x%X, base_addr = 0x%08X, length = 0x%08X, type = 0x%X\n",
-                    (unsigned int) mmap->size,
+            printf ("base_addr = 0x%08X, length = 0x%08X, type = 0x%X\n",
                     (unsigned int) (mmap->addr & 0xFFFFFFFF),
                     (unsigned int) (mmap->len & 0xFFFFFFFF),
                     (unsigned int) mmap->type);
