@@ -118,3 +118,4 @@ idt_register_stubs:
     ISR 47
     //PIC IRQs end
     ISR 127
+    ret

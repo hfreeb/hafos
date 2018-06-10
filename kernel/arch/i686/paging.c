@@ -20,6 +20,6 @@ void paging_install(void) {
 
     page_directory[0] = ((uint32_t) first_page_table) | 3;
 
-    paging_load_directory(page_directory);
+    paging_load_directory((uintptr_t) page_directory);
     paging_enable();
 }
