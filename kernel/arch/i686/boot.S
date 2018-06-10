@@ -2,7 +2,7 @@
 
 .align 16
 stack_bottom:
-.skip 16384 # 16KiB
+.skip 32768 # 32KiB
 stack_top:
 
 .section .text
