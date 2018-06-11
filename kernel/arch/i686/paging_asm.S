@@ -1,5 +1,6 @@
 .section .text
 
+//TODO: Use inline assembly & probably in a header
 .global paging_load_directory
 paging_load_directory:
     push %ebp
