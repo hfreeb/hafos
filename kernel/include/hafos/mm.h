@@ -3,4 +3,8 @@
 #include <stdbool.h>
 #include <multiboot.h>
 
-bool mm_install(multiboot_info_t *mboot_header);
+void mm_install(void);
+
+void *frame_alloc(void);
+
+void frame_free(void *ptr);
