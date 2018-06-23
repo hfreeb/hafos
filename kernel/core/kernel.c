@@ -26,6 +26,8 @@ void kernel_main(multiboot_info_t *mboot_header, uint32_t mboot_magic) {
         return;
     }
 
+    paging_install();
+
     irq_init();
     idt_init();
 
