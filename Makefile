@@ -15,7 +15,7 @@ CC := $(CROSS_DIR)/$(TARGET)-gcc --sysroot=$(SYSROOT) -isystem=$(INCLUDE_DIR)
 AR := $(CROSS_DIR)/$(TARGET)-ar
 
 WARNINGS := -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align \
-            -Wwrite-strings -Wmissing-declarations -Wredundant-decls \
+            -Wwrite-strings -Wredundant-decls \
             -Wnested-externs -Winline -Wno-long-long -Wstrict-prototypes
 
 CFLAGS += -std=gnu11 -ffreestanding -fno-builtin $(WARNINGS)
@@ -88,7 +88,7 @@ run: $(ISO)
 
 debug_run: CFLAGS += -ggdb
 debug_run: QEMU_FLAGS += -s -S
-debug_run: debug_vars run
+debug_run: run
 
 debug_gdb:
 	gdb $(KERNEL) -ex 'set architecture i386' -ex 'target remote localhost:1234' -ex 'layout asm'

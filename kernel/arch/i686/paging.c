@@ -1,4 +1,5 @@
-#include <hafos/paging.h>
+#include <hafos/mm.h>
+
 #include <stdint.h>
 
 extern void paging_load_directory(uintptr_t);
@@ -23,9 +24,3 @@ void paging_install(void) {
     paging_load_directory((uintptr_t) page_directory);
     paging_enable();
 }
-
-void *frame_allocate(void) {
-    
-}
-
-void frame_deallocate(void *addr_base);
