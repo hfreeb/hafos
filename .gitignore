@@ -6,6 +6,5 @@ testing.sh
 *.a
 sysroot/usr/
 kernel/bochsrc.txt
-kernel/compile_commands.json
-libc/compile_commands.json
+compile_commands.json
 make.config~
