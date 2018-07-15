@@ -18,7 +18,7 @@ enum vga_color {
 	VGA_COLOR_LIGHT_CYAN = 11,
 	VGA_COLOR_LIGHT_RED = 12,
 	VGA_COLOR_LIGHT_MAGENTA = 13,
-	VGA_COLOR_LIGHT_BROWN = 14,
+	VGA_COLOR_YELLOW = 14,
 	VGA_COLOR_WHITE = 15,
 };
  
@@ -36,7 +36,9 @@ void textmode_scroll(void);
 
 void textmode_set_cursor(size_t x, size_t y);
 
+void textmode_putchar_attrib(uint8_t attrib, char c);
 void textmode_putchar(char c);
 
-void textmode_write(const char* data, size_t size);
+void textmode_write(uint8_t attrib, const char* data, size_t size);
+void textmode_write_string_attrib(uint8_t attrib, const char* data);
 void textmode_write_string(const char* data);
