@@ -22,8 +22,8 @@ CFLAGS += -std=gnu11 -ffreestanding -fno-builtin $(WARNINGS)
 CPPFLAGS += -Iinclude
 
 LIBK := $(SYSROOT)$(LIB_DIR)/libk.a
-KERNEL_DIR := kernel
 KERNEL := $(SYSROOT)$(BOOT_DIR)/hafos.kernel
+KERNEL_DIR := kernel
 ARCH_DIR := $(KERNEL_DIR)/arch/$(ARCH)
 
 QEMU_FLAGS += -no-shutdown -no-reboot -d unimp,guest_errors,cpu_reset
@@ -33,10 +33,10 @@ KERNEL_SRC_FILES := $(shell find $(KERNEL_SRC_DIRS) -type f -name "*.c")
 KERNEL_ASM_FILES := $(shell find $(KERNEL_SRC_DIRS) -type f -name "*.S")
 KERNEL_DBG_FILES ?= $(shell find $(KERNEL_SRC_DIRS) -type f -name "*.d")
 
-KERNEL_INCLUDE_DIR := $(KERNEL_DIR)/include
-
 KERNEL_OBJS := $(patsubst %.c, %.o, $(KERNEL_SRC_FILES))
 KERNEL_OBJS += $(patsubst %.S, %.o, $(KERNEL_ASM_FILES))
+
+KERNEL_INCLUDE_DIR := $(KERNEL_DIR)/include
 
 KERNEL_LIBS := -nostdlib -lk -lgcc
 
@@ -94,7 +94,7 @@ debug_gdb:
 	gdb $(KERNEL) -ex 'set architecture i386' -ex 'target remote localhost:1234' -ex 'layout asm'
 
 clean: 
-	rm -rf $(KERNEL) $(ISO) $(KERNEL_OBJS) $(KERNEL_DBG_FILES) $(SYSROOT)$(INCLUDE_DIR)/ $(SYSROOT)$(LIB_DIR)
+	rm -rf $(KERNEL) $(ISO) $(KERNEL_OBJS) $(KERNEL_DBG_FILES) $(SYSROOT)$(INCLUDE_DIR)/ $(SYSROOT)$(LIB_DIR) $(LIBK_OBJS) $(LIBC_OBJS) $(LIBX_DBG_FILES)
 
 .c.o:
 	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
@@ -103,7 +103,7 @@ clean:
 	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
 
 .c.libk.o:
-	$(CC) -MD -c $< -o $@ $(CFLAGS) $(LIBK_CPPLFAGS)
+	$(CC) -MD -c $< -o $@ $(CFLAGS) $(LIBK_CPPFLAGS)
 
 .S.libk.o:
-	$(CC) -MD -c $< -o $@ $(CFLAGS) $(LIBK_CPPLFAGS)
+	$(CC) -MD -c $< -o $@ $(CFLAGS) $(LIBK_CPPFLAGS)

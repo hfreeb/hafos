@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 #ifdef __is_libk
-#include <drivers/vga/textmode.h>
+#include <drivers/textmode.h>
 #endif
 
 int putchar(int ch) {
