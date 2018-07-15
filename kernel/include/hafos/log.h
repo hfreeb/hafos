@@ -1,9 +1,10 @@
 #pragma once
 
-#include <stdio.h>
+#include <stdint.h>
 
-#define LOG_STATUS_OK      "OK"
-#define LOG_STATUS_WARNING "WARNING"
-#define LOG_STATUS_ERROR   "ERROR" 
+enum log_status {
+    LOG_STATUS_OK,
+    LOG_STATUS_ERROR
+};
 
-void log(const char *status, const char *msg);
+void log(enum log_status status, const char *msg);

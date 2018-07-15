@@ -72,7 +72,7 @@ void textmode_set_cursor(size_t x, size_t y) {
     outb(DATA_PORT, pos & 0x00FF);
 }
 
-void textmode_putchar(char c) {
+void textmode_putchar_attrib(uint8_t attrib, char c) {
     if (c == '\n') {
         if (vga_row == VGA_HEIGHT - 1) {
             textmode_scroll();
@@ -85,7 +85,7 @@ void textmode_putchar(char c) {
         return;
     }
 
-    uint16_t entry = textmode_make_entry(c, vga_attrib);
+    uint16_t entry = textmode_make_entry(c, attrib);
     textmode_put_entry_at(entry, vga_column, vga_row);
 
     ++vga_column;
@@ -101,11 +101,20 @@ void textmode_putchar(char c) {
     textmode_set_cursor(vga_column, vga_row);
 }
 
-void textmode_write(const char* data, size_t size) {
+void textmode_putchar(char c) {
+    textmode_putchar_attrib(vga_attrib, c);
+}
+
+void textmode_write(uint8_t attrib, const char* data, size_t size) {
     for (size_t i = 0; i < size; ++i) {
-        textmode_putchar(data[i]);
+        textmode_putchar_attrib(attrib, data[i]);
     }
 }
+
+void textmode_write_string_attrib(uint8_t attrib, const char* data) {
+    textmode_write(attrib, data, strlen(data));
+}
+
 void textmode_write_string(const char* data) {
-    textmode_write(data, strlen(data));
+    textmode_write_string_attrib(vga_attrib, data);
 }
