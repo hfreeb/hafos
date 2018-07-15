@@ -49,5 +49,5 @@ void kernel_main(multiboot_info_t *mboot_header, uint32_t mboot_magic) {
 
     log(LOG_STATUS_OK, "Boot successful.");
 
-    for (;;);
+    for(;;);
 }
