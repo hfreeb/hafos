@@ -64,6 +64,16 @@ void textmode_scroll(void) {
     }
 }
 
+void textmode_backspace(void) {
+    if (vga_column == 0) {
+        return;
+    }
+
+    --vga_column;
+    textmode_put_entry_at(textmode_make_entry(' ', vga_attrib), vga_column, vga_row);
+    textmode_set_cursor(vga_column, vga_row);
+}
+
 void textmode_set_cursor(size_t x, size_t y) {
     uint16_t pos = y * VGA_WIDTH + x;
     outb(CMD_PORT, HIGH_BYTE_CMD);
@@ -82,6 +92,9 @@ void textmode_putchar_attrib(uint8_t attrib, char c) {
 
         vga_column = 0;
         textmode_set_cursor(vga_column, vga_row);
+        return;
+    } else if (c == '\b') {
+        textmode_backspace();
         return;
     }
 

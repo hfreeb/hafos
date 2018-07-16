@@ -33,6 +33,7 @@ void textmode_set_attrib(uint8_t attrib);
 void textmode_put_entry_at(uint16_t entry, size_t x, size_t y);
 
 void textmode_scroll(void);
+void textmode_backspace(void);
 
 void textmode_set_cursor(size_t x, size_t y);
 
