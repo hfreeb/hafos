@@ -39,33 +39,9 @@ void framing_init(uintptr_t kernel_base, uintptr_t kernel_end, uintptr_t mmap_ad
     set_range_status(kernel_base, kernel_end, true);
 }
 
-/*
-bool mm_install(multiboot_info_t *mboot_header) {
-    if (mboot_header -> flags & (1 << 6) == 0) {
-        printf("Error: No Multiboot memory map was provided.\n");
-        return false;
-    }
-
-    mmap_addr = mboot_header->mmap_addr;
-    mmap_length = mboot_header->mmap_length;
-
-    for (multiboot_memory_map_t *mmap = (multiboot_memory_map_t *) mboot_header->mmap_addr;
-            (unsigned long) mmap < mboot_header->mmap_addr + mboot_header->mmap_length;
-            mmap = (multiboot_memory_map_t *) ((unsigned long) mmap + mmap->size + sizeof (mmap->size))) {
-
-        printf ("base_addr = 0x%08X, length = 0x%08X, type = 0x%X\n",
-                (unsigned int) (mmap->addr & 0xFFFFFFFF),
-                (unsigned int) (mmap->len & 0xFFFFFFFF),
-                (unsigned int) mmap->type);
-    }
-
-    return true;
-}*/
-
 void *frame_alloc(void) {
     for (size_t i = 0; i < PAGE_BITMAP_LENGTH * 64; ++i) {
         if (!get_page_status(i)) {
-            printf("%d is not taken\n", i);
             set_page_status(i, true);
             return (void *) (i << 12);
         }

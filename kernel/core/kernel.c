@@ -55,6 +55,24 @@ void kernel_main(multiboot_info_t *mboot_header, uint32_t mboot_magic) {
 
     textmode_write_string_attrib(textmode_make_attrib(VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK), "==== Roadmap ====\n- Heap\n- VFS\n- Initial ramdisk\n- Task switching\n- User mode execution\n- EXT2\n\n");
 
+    if (mboot_header -> flags & (1 << 6) == 0) {
+	log(LOG_STATUS_ERROR, "No Multiboot memory map was provided.");
+        return;
+    }
+
+    uintptr_t mmap_addr = mboot_header->mmap_addr;
+    size_t mmap_length = mboot_header->mmap_length;
+
+    for (multiboot_memory_map_t *mmap = (multiboot_memory_map_t *) mboot_header->mmap_addr;
+            (unsigned long) mmap < mboot_header->mmap_addr + mboot_header->mmap_length;
+            mmap = (multiboot_memory_map_t *) ((unsigned long) mmap + mmap->size + sizeof (mmap->size))) {
+
+        printf ("base_addr = 0x%08X, length = 0x%08X, type = 0x%X\n",
+                (unsigned int) (mmap->addr & 0xFFFFFFFF),
+                (unsigned int) (mmap->len & 0xFFFFFFFF),
+                (unsigned int) mmap->type);
+    }
+
     asm volatile ("sti");
 
     log(LOG_STATUS_OK, "Boot successful.");
