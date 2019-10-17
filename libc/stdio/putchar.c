@@ -10,4 +10,5 @@ int putchar(int ch) {
     char c = (char) ch;
     textmode_putchar(c);
 #endif
+    return ch; //TODO: Return EOF and set error indicator on stdout on failure.
 }

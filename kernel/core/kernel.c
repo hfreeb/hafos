@@ -7,9 +7,10 @@
 #include <hafos/idt.h>
 #include <hafos/irq.h>
 #include <hafos/log.h>
+#include <stdio.h>
 
-extern uintptr_t kernel_base;
-extern uintptr_t kernel_end;
+extern void *kernel_base;
+extern void *kernel_end;
 
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
@@ -29,11 +30,11 @@ void kernel_main(multiboot_info_t *mboot_header, uint32_t mboot_magic) {
     paging_install();
     log(LOG_STATUS_OK, "Paging installed.");
 
-    if ((mboot_header->flags & (1 << 6)) == 0) {
-        log(LOG_STATUS_ERROR, "No Multiboot memory map was provided.");
-        return;
-    }
-    framing_init(kernel_base, kernel_end, mboot_header->mmap_addr, mboot_header->mmap_length);
+     if ((mboot_header->flags & (1 << 6)) == 0) {
+         log(LOG_STATUS_ERROR, "No Multiboot memory map was provided.");
+         return;
+     }
+    framing_install(&kernel_base, &kernel_end, mboot_header->mmap_addr, mboot_header->mmap_length);
     log(LOG_STATUS_OK, "Page frame allocator initialized.");
 
     irq_init();
@@ -54,6 +55,24 @@ void kernel_main(multiboot_info_t *mboot_header, uint32_t mboot_magic) {
     textmode_write_string("\n\n");
 
     textmode_write_string_attrib(textmode_make_attrib(VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK), "==== Roadmap ====\n- Heap\n- VFS\n- Initial ramdisk\n- Task switching\n- User mode execution\n- EXT2\n\n");
+
+    if ((mboot_header->flags & (1 << 6)) == 0) {
+	log(LOG_STATUS_ERROR, "No Multiboot memory map was provided.");
+        return;
+    }
+
+    uintptr_t mmap_addr = mboot_header->mmap_addr;
+    size_t mmap_length = mboot_header->mmap_length;
+
+    for (multiboot_memory_map_t *mmap = (multiboot_memory_map_t *) mboot_header->mmap_addr;
+            (unsigned long) mmap < mboot_header->mmap_addr + mboot_header->mmap_length;
+            mmap = (multiboot_memory_map_t *) ((unsigned long) mmap + mmap->size + sizeof (mmap->size))) {
+
+        printf("base_addr = 0x%08X, length = 0x%08X, type = 0x%X\n",
+                (unsigned int) (mmap->addr & 0xFFFFFFFF),
+                (unsigned int) (mmap->len & 0xFFFFFFFF),
+                (unsigned int) mmap->type);
+    }
 
     asm volatile ("sti");
 
