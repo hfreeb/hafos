@@ -33,9 +33,11 @@ run: $(KERNEL)
 
 debug: CFLAGS += -ggdb
 debug: QEMU_FLAGS += -s -S
-debug: $(ISO)
-	qemu-system-i386 $(QEMU_FLAGS) -kernel $(KERNEL) &
-	gdb $(KERNEL) -ex 'set architecture i386' -ex 'target remote localhost:1234' -ex 'layout asm'
+debug: $(KERNEL)
+	qemu-system-i386 $(QEMU_FLAGS) -kernel $(KERNEL)
+
+debug_gdb:
+	gdb $(KERNEL) -ex 'set architecture i386' -ex 'target remote localhost:1234'
 
 clean:
 	rm -f $(OBJ_FILES) $(DEP_FILES) $(KERNEL) $(ISO)
