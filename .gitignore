@@ -1,0 +1,7 @@
+/.idea/
+/compile_commands.json
+/hafos.iso
+/kernel/hafos
+/sysroot/boot/hafos
+*.o
+*.d
