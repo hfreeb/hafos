@@ -1,5 +1,5 @@
 OUT_DIR := bin
-KERNEL := $(OUT_DIR)/kernel/hafos
+KERNEL := $(OUT_DIR)/hafos.kernel
 SYSROOT := sysroot
 ISO := hafos.iso
 
@@ -11,7 +11,7 @@ WARNINGS := -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align \
             -Wwrite-strings -Wredundant-decls -Wno-unused-parameter \
             -Wnested-externs -Winline -Wno-long-long -Wstrict-prototypes
 
-CFLAGS := -std=gnu11 -ffreestanding -nostdlib -lgcc \
+CFLAGS := -std=gnu11 -ffreestanding -nostdlib -lgcc -Ikernel \
 	  $(WARNINGS)
 
 QEMU_FLAGS := -no-shutdown -no-reboot -d unimp,guest_errors,cpu_reset
