@@ -3,5 +3,4 @@
 /hafos.iso
 /kernel/hafos
 /sysroot/boot/hafos
-*.o
-*.d
+/bin/

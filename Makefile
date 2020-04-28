@@ -1,4 +1,5 @@
-KERNEL := kernel/hafos
+OUT_DIR := bin
+KERNEL := $(OUT_DIR)/kernel/hafos
 SYSROOT := sysroot
 ISO := hafos.iso
 
@@ -16,10 +17,14 @@ CFLAGS := -std=gnu11 -ffreestanding -nostdlib -lgcc \
 QEMU_FLAGS := -no-shutdown -no-reboot -d unimp,guest_errors,cpu_reset
 
 SRC_FILES := $(shell find kernel -type f -name "*.c" -or -name "*.s")
-OBJ_FILES := $(addsuffix .o, $(basename $(SRC_FILES)))
+
+OBJ_FILES := $(addprefix $(OUT_DIR)/, $(addsuffix .o, $(basename $(SRC_FILES))))
+OBJ_DIRS := $(dir $(OBJ_FILES))
+$(shell mkdir --parents $(OBJ_DIRS))
+
 DEP_FILES := $(addsuffix .d, $(basename $(SRC_FILES)))
 
-all: $(ISO)
+all: $(KERNEL)
 
 $(KERNEL): $(OBJ_FILES) kernel/linker.ld
 	$(CC) $(CFLAGS) -T kernel/linker.ld -o $@ $(OBJ_FILES)
@@ -40,10 +45,10 @@ debug_gdb:
 	gdb $(KERNEL) -ex 'set architecture i386' -ex 'target remote localhost:1234'
 
 clean:
-	rm -f $(OBJ_FILES) $(DEP_FILES) $(KERNEL) $(ISO)
+	rm -rf $(OUT_DIR) $(ISO)
 
-%.o: %.c
+$(OUT_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) -MD -c $< -o $@
 
-%.o: %.s
+$(OUT_DIR)/%.o: %.s
 	$(CC) $(CFLAGS) -MD -c $< -o $@
