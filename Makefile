@@ -17,11 +17,7 @@ CFLAGS := -std=gnu11 -ffreestanding -nostdlib -lgcc \
 QEMU_FLAGS := -no-shutdown -no-reboot -d unimp,guest_errors,cpu_reset
 
 SRC_FILES := $(shell find kernel -type f -name "*.c" -or -name "*.s")
-
 OBJ_FILES := $(addprefix $(OUT_DIR)/, $(addsuffix .o, $(basename $(SRC_FILES))))
-OBJ_DIRS := $(dir $(OBJ_FILES))
-$(shell mkdir --parents $(OBJ_DIRS))
-
 DEP_FILES := $(addsuffix .d, $(basename $(SRC_FILES)))
 
 all: $(KERNEL)
@@ -48,7 +44,9 @@ clean:
 	rm -rf $(OUT_DIR) $(ISO)
 
 $(OUT_DIR)/%.o: %.c
+	mkdir -p $(OUT_DIR)/$(*D)
 	$(CC) $(CFLAGS) -MD -c $< -o $@
 
 $(OUT_DIR)/%.o: %.s
+	mkdir -p $(OUT_DIR)/$(*D)
 	$(CC) $(CFLAGS) -MD -c $< -o $@
