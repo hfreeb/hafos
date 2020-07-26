@@ -1,7 +1,7 @@
 #include "textmode.h"
 
 #include <string.h>
-#include <hafos/io.h>
+#include "io.h"
 
 #define VGA_WIDTH  80
 #define VGA_HEIGHT 25

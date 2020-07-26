@@ -2,4 +2,4 @@
 /compile_commands.json
 /hafos.iso
 /sysroot/boot/hafos
-/bin/
+/build/
