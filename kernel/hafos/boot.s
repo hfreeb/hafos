@@ -1,5 +1,11 @@
 .set KERNEL_VMA, 0xC0000000
 
+.set PAGE_PRESENT, 1 << 0
+.set PAGE_RW,      1 << 1
+
+.set CR0_PAGING,        1 << 31
+.set CR0_WRITE_PROTECT, 1 << 16
+
 # Multiboot header constants
 .set ALIGN,    1 << 0
 .set MEMINFO,  1 << 1
@@ -29,39 +35,47 @@ boot_page_table1:
 .global _start
 .type _start, @function
 _start:
+    # at this point we haven't jumped to the higher half,
+    # so we need to be using the physical address rather than
+    # the virtual address, so subtract KERNEL_VMA.
+
+    # map the first 1023 pages (the 1024th is used for the VGA text buffer)
     movl $(boot_page_table1 - KERNEL_VMA), %edi
     movl $0, %esi
-    movl $1024, %ecx
+    movl $1023, %ecx
 
-1:
+map_page:
     cmpl $(_kernel_start - KERNEL_VMA), %esi
-    jl 2f
+    jl map_skip
     cmpl $(_kernel_end - KERNEL_VMA), %esi
-    jge 3f
+    jge map_end
 
     movl %esi, %edx
-    # NOTE: This maps all the kernel pages as (present and) writable, .rodata and .text probably shouldn't be
-    orl $0x003, %edx
+    # NOTE: this maps all the kernel pages as writable,
+    # .rodata and .text probably shouldn't be
+    orl $(PAGE_PRESENT | PAGE_RW), %edx
     movl %edx, (%edi)
-2:
+map_skip:
     addl $4096, %esi
     addl $4, %edi
-    loop 1b
-3:
-    # Map VGA video memory to 0xC03FF000 (0x003 = present and writable)
-    movl $(0x000B8000 | 0x003), boot_page_table1 - KERNEL_VMA + 1023 * 4
+    loop map_page
+map_end:
+    # map VGA video memory to 0xC03FF000
+    movl $(0x000B8000 | PAGE_PRESENT | PAGE_RW), boot_page_table1 - KERNEL_VMA + 1023 * 4
 
-    # Map page table to 0x00000000 and KERNAL_VMA
-    movl $(boot_page_table1 - KERNEL_VMA + 0x003), boot_page_directory - KERNEL_VMA + 0 # Identity map
-    movl $(boot_page_table1 - KERNEL_VMA + 0x003), boot_page_directory - KERNEL_VMA + 768 * 4 # Higher half map
+    # map page table to 0x00000000 and KERNAL_VMA
+    # the identity map is only required initially when paging is enabled
+    # this is unmapped once we have jumped to the higher half
+    movl $((boot_page_table1 - KERNEL_VMA) + PAGE_PRESENT + PAGE_RW), boot_page_directory - KERNEL_VMA + 0 # Identity map
+    movl $((boot_page_table1 - KERNEL_VMA) + PAGE_PRESENT + PAGE_RW), boot_page_directory - KERNEL_VMA + 768 * 4 # Higher half map
 
-    # Set cr3 to the address of the boot_page_directory
+    # set the page directory
     movl $(boot_page_directory - KERNEL_VMA), %ecx
     movl %ecx, %cr3
 
-    # Enable paging and the write-protect bit
+    # enable paging and the write-protect bit
     movl %cr0, %ecx
-    orl $0x80010000, %ecx
+    orl $(CR0_PAGING | CR0_WRITE_PROTECT), %ecx
     movl %ecx, %cr0
 
     # Jump to higher half
